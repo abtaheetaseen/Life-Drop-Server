@@ -25,7 +25,20 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
+    // database collections
+    const userCollection = client.db("lifeDropDB").collection("users");
 
+    // post user
+    app.post("/users", async(req, res) => {
+        const user = req.body;
+        const existingEmail = await userCollection.findOne({email: user.email})
+        if(existingEmail) {
+            console.log("User already exist in db")
+            return;
+        }
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
