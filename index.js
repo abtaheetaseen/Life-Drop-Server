@@ -27,6 +27,9 @@ async function run() {
 
     // database collections
     const userCollection = client.db("lifeDropDB").collection("users");
+    const divisionCollection = client.db("lifeDropDB").collection("divisions");
+    const districtCollection = client.db("lifeDropDB").collection("districts");
+    const upazilaCollection = client.db("lifeDropDB").collection("upazilas");
 
     // post user
     app.post("/users", async(req, res) => {
@@ -37,6 +40,24 @@ async function run() {
             return;
         }
         const result = await userCollection.insertOne(user);
+        res.send(result);
+    })
+
+    // get all divisions
+    app.get("/divisions", async(req, res) => {
+        const result = await divisionCollection.find().toArray();
+        res.send(result);
+    })
+
+    // get all districts
+    app.get("/districts", async(req, res) => {
+        const result = await districtCollection.find().toArray();
+        res.send(result);
+    })
+
+    // get all upazilas
+    app.get("/upazilas", async(req, res) => {
+        const result = await upazilaCollection.find().toArray();
         res.send(result);
     })
 
