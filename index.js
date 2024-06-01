@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // mongo db
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster1.ofi7kql.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -40,6 +40,37 @@ async function run() {
             return;
         }
         const result = await userCollection.insertOne(user);
+        res.send(result);
+    })
+
+    // get user by email
+    app.get("/users", async(req, res) => {
+        let query = {};
+        if(req.query?.email){
+            query = {email: req.query.email}
+        }
+        const result = await userCollection.findOne(query);
+        res.send(result);
+    })
+
+    app.put("/users/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const options = { upsert: true };
+        const updatedUser = req.body;
+        const updatedDoc = {
+            $set: {
+                name: updatedUser.name,
+                email: updatedUser.email,
+                division: updatedUser.division,
+                district: updatedUser.district,
+                upazila: updatedUser.upazila,
+                image_url: updatedUser.image_url,
+                bloodGroup: updatedUser.bloodGroup
+            }
+        }
+
+        const result = await userCollection.updateOne(filter, updatedDoc, options);
         res.send(result);
     })
 
