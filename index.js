@@ -43,6 +43,35 @@ async function run() {
         res.send(result);
     })
 
+    app.get("/user", async(req, res) => {
+        const result = await userCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.patch("/user/admin/make-volunteer/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                role: "volunteer"
+            }
+        }
+        const result = await userCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    app.patch("/user/admin/make-admin/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                role: "admin"
+            }
+        }
+        const result = await userCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
     // get user by email
     app.get("/users", async(req, res) => {
         let query = {};
