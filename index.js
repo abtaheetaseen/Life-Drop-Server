@@ -104,7 +104,7 @@ async function run() {
         res.send({admin});
     })
 
-    app.patch("/user/admin/make-volunteer/:id", async(req, res) => {
+    app.patch("/user/admin/make-volunteer/:id", verifyToken, verifyAdmin, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
@@ -116,7 +116,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/user/admin/make-admin/:id", async(req, res) => {
+    app.patch("/user/admin/make-admin/:id", verifyToken, verifyAdmin, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
@@ -128,7 +128,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/user/admin/block-user/:id", async(req, res) => {
+    app.patch("/user/admin/block-user/:id", verifyToken, verifyAdmin, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
@@ -140,7 +140,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/user/admin/unblock-user/:id", async(req, res) => {
+    app.patch("/user/admin/unblock-user/:id", verifyToken, verifyAdmin, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
@@ -153,7 +153,7 @@ async function run() {
     })
 
     // get user by email
-    app.get("/users", verifyToken, verifyAdmin, async(req, res) => {
+    app.get("/users", verifyToken, async(req, res) => {
         let query = {};
         if(req.query?.email){
             query = {email: req.query.email}
@@ -162,7 +162,7 @@ async function run() {
         res.send(result);
     })
 
-    app.put("/users/:id", async(req, res) => {
+    app.put("/users/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const options = { upsert: true };
