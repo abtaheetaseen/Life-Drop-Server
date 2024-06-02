@@ -72,6 +72,30 @@ async function run() {
         res.send(result);
     })
 
+    app.patch("/user/admin/block-user/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "blocked"
+            }
+        }
+        const result = await userCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    app.patch("/user/admin/unblock-user/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "active"
+            }
+        }
+        const result = await userCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
     // get user by email
     app.get("/users", async(req, res) => {
         let query = {};
