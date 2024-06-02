@@ -31,6 +31,7 @@ async function run() {
     const divisionCollection = client.db("lifeDropDB").collection("divisions");
     const districtCollection = client.db("lifeDropDB").collection("districts");
     const upazilaCollection = client.db("lifeDropDB").collection("upazilas");
+    const donationRequestCollection = client.db("lifeDropDB").collection("donationRequests");
 
     // jwt api
     app.post("/jwt", async(req, res) => {
@@ -180,6 +181,13 @@ async function run() {
         }
 
         const result = await userCollection.updateOne(filter, updatedDoc, options);
+        res.send(result);
+    })
+
+    // user donation request
+    app.post("/donationRequest", async(req, res) => {
+        const donationRequest = req.body;
+        const result = await donationRequestCollection.insertOne(donationRequest);
         res.send(result);
     })
 
