@@ -191,6 +191,18 @@ async function run() {
         res.send(result);
     })
 
+    app.get("/donationRequest", async(req, res) => {
+        
+        let query = {};
+        if(req.query?.email){
+            query = {requesterEmail: req.query.email}
+        }
+
+        const cursor = donationRequestCollection.find(query).sort({"date": -1});
+        const result = await cursor.toArray();
+        res.send(result);
+    })
+
     // get all divisions
     app.get("/divisions", async(req, res) => {
         const result = await divisionCollection.find().toArray();
