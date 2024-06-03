@@ -251,12 +251,24 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/donationRequest/doneStatus/:id", verifyToken, verifyAdmin, async(req, res) => {
+    app.patch("/donationRequest/doneStatus/:id", async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
             $set: {
                 status: "done"
+            }
+        }
+        const result = await donationRequestCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    app.patch("/donationRequest/canceledStatus/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "canceled"
             }
         }
         const result = await donationRequestCollection.updateOne(filter, updatedDoc);
