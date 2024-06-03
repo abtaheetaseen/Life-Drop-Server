@@ -234,7 +234,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/donationRequest/:id", async(req, res) => {
+    app.patch("/donationRequest/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         console.log(id)
         const donorDetails = req.body;
@@ -251,7 +251,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/donationRequest/doneStatus/:id", async(req, res) => {
+    app.patch("/donationRequest/doneStatus/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
@@ -263,7 +263,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/donationRequest/canceledStatus/:id", async(req, res) => {
+    app.patch("/donationRequest/canceledStatus/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const updatedDoc = {
