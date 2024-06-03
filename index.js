@@ -163,6 +163,7 @@ async function run() {
         res.send(result);
     })
 
+    // update user
     app.put("/users/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
