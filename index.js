@@ -203,6 +203,36 @@ async function run() {
         res.send(result);
     })
 
+    app.get("/donationRequest", async(req, res) => {
+        const result = await donationRequestCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.put("/donationRequest/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const options = { upsert: true };
+        const updatedRequest = req.body;
+        const updatedDoc = {
+            $set: {
+                requesterName: updatedRequest.requesterName,
+                requesterEmail: updatedRequest.requesterEmail,
+                recipientName: updatedRequest.recipientName,
+                division: updatedRequest.division,
+                district: updatedRequest.district,
+                upazila: updatedRequest.upazila,
+                bloodGroup: updatedRequest.bloodGroup,
+                hospitalName: updatedRequest.hospitalName,
+                fullAddress: updatedRequest.fullAddress,
+                donationDate: updatedRequest.donationDate,
+                donationTime: updatedRequest.donationTime,
+                requestMessage: updatedRequest.requestMessage
+            }
+        }
+        const result = await donationRequestCollection.updateOne(filter, updatedDoc, options);
+        res.send(result);
+    })
+
     app.delete("/donationRequest/:id", async(req, res) => {
         const id = req.params.id;
         const query = { _id : new ObjectId(id) };
