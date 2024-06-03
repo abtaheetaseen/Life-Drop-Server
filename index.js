@@ -204,12 +204,12 @@ async function run() {
         res.send(result);
     })
 
-    app.get("/donationRequest", async(req, res) => {
+    app.get("/donationRequest", verifyToken, verifyAdmin, async(req, res) => {
         const result = await donationRequestCollection.find().toArray();
         res.send(result);
     })
 
-    app.put("/donationRequest/:id", async(req, res) => {
+    app.put("/donationRequest/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
         const options = { upsert: true };
@@ -234,7 +234,36 @@ async function run() {
         res.send(result);
     })
 
-    app.delete("/donationRequest/:id", async(req, res) => {
+    app.patch("/donationRequest/:id", async(req, res) => {
+        const id = req.params.id;
+        console.log(id)
+        const donorDetails = req.body;
+        console.log(donorDetails);
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "inProgress",
+                donorName: donorDetails.donorName,
+                donorEmail: donorDetails.donorEmail
+            }
+        }
+        const result = await donationRequestCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    app.patch("/donationRequest/doneStatus/:id", verifyToken, verifyAdmin, async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "done"
+            }
+        }
+        const result = await donationRequestCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    app.delete("/donationRequest/:id", verifyToken, async(req, res) => {
         const id = req.params.id;
         const query = { _id : new ObjectId(id) };
         const result = await donationRequestCollection.deleteOne(query);
