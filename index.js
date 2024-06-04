@@ -369,6 +369,7 @@ async function run() {
         res.send(result);
     })
 
+    // for volunteer
     app.get("/blog", verifyToken, verifyVolunteer, async(req, res) => {
         const result = await blogCollection.find().toArray();
         res.send(result);
