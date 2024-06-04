@@ -362,6 +362,18 @@ async function run() {
         res.send(result);
     })
 
+    
+    app.post("/blog", verifyToken, verifyVolunteer, async(req, res) => {
+        const blog = req.body;
+        const result = await blogCollection.insertOne(blog);
+        res.send(result);
+    })
+
+    app.get("/blog", verifyToken, verifyVolunteer, async(req, res) => {
+        const result = await blogCollection.find().toArray();
+        res.send(result);
+    })
+
     app.patch("/blogs/draft/:id", verifyToken, verifyAdmin, async(req, res) => {
         const id = req.params.id;
         const filter = { _id : new ObjectId(id) };
