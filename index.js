@@ -231,7 +231,7 @@ async function run() {
         res.send(result);
     })
 
-    app.get("/allDonationRequestForVolunteer/", verifyToken, verifyVolunteer, async(req, res) => {
+    app.get("/allDonationRequestForVolunteer", verifyToken, verifyVolunteer, async(req, res) => {
         const result = await donationRequestCollection.find().toArray();
         res.send(result);
     })
@@ -371,6 +371,21 @@ async function run() {
             }
         }
         const result = await blogCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    // find published blog data
+    app.get("/publishedBlogs", async(req, res) => {
+        const result = await blogCollection.find({
+            status: "published"
+        }).toArray();
+        res.send(result);
+    })
+
+    app.get("/publishedBlogs/:id", async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await blogCollection.findOne(query);
         res.send(result);
     })
 
