@@ -73,6 +73,17 @@ async function run() {
         next();
     }
 
+    const verifyVolunteer = async(req, res, next) => {
+        const email = req.decoded.email;
+        const query = {email: email};
+        const user = await userCollection.findOne(query);
+        const isVolunteer = user?.role === "volunteer";
+        if(!isVolunteer){
+            return res.status(403).send({message: "Forbidden Access"})
+        }
+        next();
+    }
+
     // post user
     app.post("/users", async(req, res) => {
         const user = req.body;
@@ -90,7 +101,7 @@ async function run() {
         res.send(result);
     })
 
-    app.get("/user/admin/:email", verifyToken, async(req, res) => {
+    app.get("/user/admin/:email", verifyToken, verifyAdmin, async(req, res) => {
         const email = req.params.email;
         if(email !== req.decoded.email){
             return res.status(401).send({message: "Forbidden Access"});
@@ -103,6 +114,21 @@ async function run() {
             admin = user?.role === "admin";
         }
         res.send({admin});
+    })
+
+    app.get("/user/volunteer/:email", verifyToken, verifyVolunteer, async(req, res) => {
+        const email = req.params.email;
+        if(email !== req.decoded.email){
+            return res.status(401).send({message: "Forbidden Access"});
+        }
+
+        const query = {email: email};
+        const user = await userCollection.findOne(query);
+        let volunteer = false;
+        if(user){
+            volunteer = user?.role === "volunteer";
+        }
+        res.send({volunteer});
     })
 
     app.patch("/user/admin/make-volunteer/:id", verifyToken, verifyAdmin, async(req, res) => {
@@ -201,6 +227,11 @@ async function run() {
 
         const cursor = donationRequestCollection.find(query).sort({"date": -1});
         const result = await cursor.toArray();
+        res.send(result);
+    })
+
+    app.get("/allDonationRequestForVolunteer/", verifyToken, verifyVolunteer, async(req, res) => {
+        const result = await donationRequestCollection.find().toArray();
         res.send(result);
     })
 
