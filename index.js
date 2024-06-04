@@ -32,6 +32,7 @@ async function run() {
     const districtCollection = client.db("lifeDropDB").collection("districts");
     const upazilaCollection = client.db("lifeDropDB").collection("upazilas");
     const donationRequestCollection = client.db("lifeDropDB").collection("donationRequests");
+    const blogCollection = client.db("lifeDropDB").collection("blogs");
 
     // jwt api
     app.post("/jwt", async(req, res) => {
@@ -328,6 +329,48 @@ async function run() {
     // get all upazilas
     app.get("/upazilas", async(req, res) => {
         const result = await upazilaCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.post("/blogs", verifyToken, verifyAdmin, async(req, res) => {
+        const blog = req.body;
+        const result = await blogCollection.insertOne(blog);
+        res.send(result);
+    })
+
+    app.get("/blogs", verifyToken, verifyAdmin, async(req, res) => {
+        const result = await blogCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.delete("/blogs/:id", verifyToken, verifyAdmin, async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await blogCollection.deleteOne(query);
+        res.send(result);
+    })
+
+    app.patch("/blogs/publish/:id", verifyToken, verifyAdmin, async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "published"
+            }
+        }
+        const result = await blogCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+    })
+
+    app.patch("/blogs/draft/:id", verifyToken, verifyAdmin, async(req, res) => {
+        const id = req.params.id;
+        const filter = { _id : new ObjectId(id) };
+        const updatedDoc = {
+            $set: {
+                status: "draft"
+            }
+        }
+        const result = await blogCollection.updateOne(filter, updatedDoc);
         res.send(result);
     })
 
