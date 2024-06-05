@@ -423,6 +423,20 @@ async function run() {
         res.send({totalDonationRequestCountUser});
     })
 
+    app.get("/admin-stats", verifyToken, verifyAdmin, async(req, res) => {
+        const totalUsers = await userCollection.estimatedDocumentCount();
+        const totalDonationRequests = await donationRequestCollection.estimatedDocumentCount();
+
+        res.send({totalUsers, totalDonationRequests})
+    })
+
+    app.get("/volunteer-stats", verifyToken, verifyVolunteer, async(req, res) => {
+        const totalUsers = await userCollection.estimatedDocumentCount();
+        const totalDonationRequests = await donationRequestCollection.estimatedDocumentCount();
+
+        res.send({totalUsers, totalDonationRequests})
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
