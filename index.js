@@ -221,23 +221,31 @@ async function run() {
 
     app.get("/donationRequest", async(req, res) => {
         
+        console.log(req.query)
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+
         let query = {};
         if(req.query?.email){
             query = {requesterEmail: req.query.email}
         }
 
-        const cursor = donationRequestCollection.find(query).sort({"date": -1});
+        const cursor = donationRequestCollection.find(query).sort({"date": -1}).skip(page * size).limit(size);
         const result = await cursor.toArray();
         res.send(result);
     })
 
     app.get("/allDonationRequestForVolunteer", verifyToken, verifyVolunteer, async(req, res) => {
-        const result = await donationRequestCollection.find().toArray();
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+        const result = await donationRequestCollection.find().skip(page * size).limit(size).toArray();
         res.send(result);
     })
 
-    app.get("/donationRequest", verifyToken, verifyAdmin, async(req, res) => {
-        const result = await donationRequestCollection.find().toArray();
+    app.get("/donationRequests", verifyToken, verifyAdmin, async(req, res) => {
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+        const result = await donationRequestCollection.find().skip(page * size).limit(size).toArray();
         res.send(result);
     })
 
@@ -400,6 +408,19 @@ async function run() {
         const query = {_id: new ObjectId(id)}
         const result = await blogCollection.findOne(query);
         res.send(result);
+    })
+
+    // find total count
+    app.get("/totalDonationRequestCount", async(req, res) => {
+        const totalDonationRequestCount = await donationRequestCollection.estimatedDocumentCount();
+        res.send({totalDonationRequestCount});
+    })
+
+    app.get("/totalDonationRequestCountUser", async(req, res) => {
+
+        const email = req.query.email;
+        const totalDonationRequestCountUser = await donationRequestCollection.countDocuments({requesterEmail: email});
+        res.send({totalDonationRequestCountUser});
     })
 
     // Send a ping to confirm a successful connection
