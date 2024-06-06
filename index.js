@@ -430,6 +430,7 @@ async function run() {
         res.send({totalUsers, totalDonationRequests})
     })
 
+    // volunteer stats
     app.get("/volunteer-stats", verifyToken, verifyVolunteer, async(req, res) => {
         const totalUsers = await userCollection.estimatedDocumentCount();
         const totalDonationRequests = await donationRequestCollection.estimatedDocumentCount();
