@@ -283,7 +283,7 @@ async function run() {
         res.send(result);
     })
 
-    app.patch("/donationRequest/:id", verifyToken, async(req, res) => {
+    app.patch("/donationRequest/:id", async(req, res) => {
         const id = req.params.id;
         console.log(id)
         const donorDetails = req.body;
@@ -349,6 +349,7 @@ async function run() {
         res.send(result);
     })
 
+    // post blog
     app.post("/blogs", verifyToken, verifyAdmin, async(req, res) => {
         const blog = req.body;
         const result = await blogCollection.insertOne(blog);
