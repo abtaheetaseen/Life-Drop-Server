@@ -105,7 +105,9 @@ async function run() {
     })
 
     app.get("/user", verifyToken, verifyAdmin, async(req, res) => {
-        const result = await userCollection.find().toArray();
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+        const result = await userCollection.find().skip(page * size).limit(size).toArray();
         res.send(result);
     })
 
@@ -418,12 +420,17 @@ async function run() {
     })
 
     // find total count
-    app.get("/totalDonationRequestCount", async(req, res) => {
+    app.get("/totalUsersCount", verifyToken, verifyAdmin, async(req, res) => {
+        const totalUsersCount = await userCollection.estimatedDocumentCount();
+        res.send({totalUsersCount});
+    })
+
+    app.get("/totalDonationRequestCount", verifyToken, async(req, res) => {
         const totalDonationRequestCount = await donationRequestCollection.estimatedDocumentCount();
         res.send({totalDonationRequestCount});
     })
 
-    app.get("/totalDonationRequestCountUser", async(req, res) => {
+    app.get("/totalDonationRequestCountUser", verifyToken, async(req, res) => {
 
         const email = req.query.email;
         const totalDonationRequestCountUser = await donationRequestCollection.countDocuments({requesterEmail: email});
