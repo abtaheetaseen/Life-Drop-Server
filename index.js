@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 require('dotenv').config();
 
 app.use(cors());
@@ -33,6 +34,7 @@ async function run() {
     const upazilaCollection = client.db("lifeDropDB").collection("upazilas");
     const donationRequestCollection = client.db("lifeDropDB").collection("donationRequests");
     const blogCollection = client.db("lifeDropDB").collection("blogs");
+    const paymentCollection = client.db("lifeDropDB").collection("payments");
 
     // jwt api
     app.post("/jwt", async(req, res) => {
@@ -94,6 +96,11 @@ async function run() {
             return;
         }
         const result = await userCollection.insertOne(user);
+        res.send(result);
+    })
+
+    app.get("/allDonors", async(req, res) => {
+        const result = await userCollection.find({role: "donor"}).toArray();
         res.send(result);
     })
 
@@ -437,6 +444,31 @@ async function run() {
 
         res.send({totalUsers, totalDonationRequests})
     })
+
+    // insert payment
+    // app.post("/payments", async(req, res) => {
+    //     const paymentDetails = req.body;
+    //     const result = await paymentCollection.insertOne(paymentDetails);
+    //     res.send(result);
+    // })
+
+    // payment-intent
+    // app.post("/create-payment-intent", async(req, res) => {
+    //     const paymentDetails = req.body;
+    //     const price = paymentDetails.fundingAmount;
+    //     const amount = parseInt(price * 100);
+    //     console.log(amount, "inside the intent")
+
+    //     const paymentIntent = await stripe.paymentIntents.create({
+    //         amount: amount,
+    //         currency: "usd",
+    //         payment_method_types: ["card"]
+    //     });
+
+    //     res.send({
+    //         clientSecret: paymentIntent.client_secret
+    //     });
+    // })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
