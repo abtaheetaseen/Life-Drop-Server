@@ -469,7 +469,7 @@ async function run() {
         res.send(result);
     })
 
-    // payment-intent
+    // create payment-intent
     app.post("/create-payment-intent", async(req, res) => {
         const {price} = req.body;
         console.log(typeof price)
