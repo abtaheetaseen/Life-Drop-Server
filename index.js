@@ -441,16 +441,20 @@ async function run() {
     app.get("/admin-stats", verifyToken, verifyAdmin, async(req, res) => {
         const totalUsers = await userCollection.estimatedDocumentCount();
         const totalDonationRequests = await donationRequestCollection.estimatedDocumentCount();
+        const funds = await paymentCollection.find().toArray();
+        const revenue = funds.reduce((total, fund) => total + parseFloat(fund.amount), 0);
 
-        res.send({totalUsers, totalDonationRequests})
+        res.send({totalUsers, totalDonationRequests, revenue});
     })
 
     // volunteer stats
     app.get("/volunteer-stats", verifyToken, verifyVolunteer, async(req, res) => {
         const totalUsers = await userCollection.estimatedDocumentCount();
         const totalDonationRequests = await donationRequestCollection.estimatedDocumentCount();
+        const funds = await paymentCollection.find().toArray();
+        const revenue = funds.reduce((total, fund) => total + parseFloat(fund.amount), 0);
 
-        res.send({totalUsers, totalDonationRequests})
+        res.send({totalUsers, totalDonationRequests, revenue})
     })
 
     // insert fund ddetails
