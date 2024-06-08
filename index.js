@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")("sk_test_51PKiegRpw4vm6ovqL99cIbXx6C4wUpnD1iSEMKtZIpFVY2qZph0L2dLFKyLofl0raMACCgbRybv6Jz2FWzokiIXN00NyqpfOIH");
 require('dotenv').config();
 
 app.use(cors());
@@ -431,7 +431,7 @@ async function run() {
         res.send({totalDonationRequestCount});
     })
 
-    app.get("/totalDonationRequestCountUser", verifyToken, async(req, res) => {
+    app.get("/totalDonationRequestCountUser", async(req, res) => {
 
         const email = req.query.email;
         const totalDonationRequestCountUser = await donationRequestCollection.countDocuments({requesterEmail: email});
@@ -453,30 +453,39 @@ async function run() {
         res.send({totalUsers, totalDonationRequests})
     })
 
-    // insert payment
-    // app.post("/payments", async(req, res) => {
-    //     const paymentDetails = req.body;
-    //     const result = await paymentCollection.insertOne(paymentDetails);
-    //     res.send(result);
-    // })
+    // insert fund ddetails
+    app.post("/payment", async(req, res) => {
+        const fundDetails = req.body;
+        const result = await paymentCollection.insertOne(fundDetails);
+        res.send(result);
+    })
+
+    app.get("/payment", verifyToken, async(req, res) => {
+        const result = await paymentCollection.find().toArray();
+        res.send(result);
+    })
 
     // payment-intent
-    // app.post("/create-payment-intent", async(req, res) => {
-    //     const paymentDetails = req.body;
-    //     const price = paymentDetails.fundingAmount;
-    //     const amount = parseInt(price * 100);
-    //     console.log(amount, "inside the intent")
+    app.post("/create-payment-intent", async(req, res) => {
+        const {price} = req.body;
+        console.log(typeof price)
+        if(price == 0){
+            return;
+        }
+        const amount = parseInt(price * 100);
+        console.log(amount, "inside the intent")
 
-    //     const paymentIntent = await stripe.paymentIntents.create({
-    //         amount: amount,
-    //         currency: "usd",
-    //         payment_method_types: ["card"]
-    //     });
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount,
+            currency: "usd",
+            payment_method_types: ["card"]
+        });
+        console.log(paymentIntent);
 
-    //     res.send({
-    //         clientSecret: paymentIntent.client_secret
-    //     });
-    // })
+        res.send({
+            clientSecret: paymentIntent.client_secret
+        });
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
