@@ -6,7 +6,13 @@ const jwt = require("jsonwebtoken");
 const stripe = require("stripe")("sk_test_51PKiegRpw4vm6ovqL99cIbXx6C4wUpnD1iSEMKtZIpFVY2qZph0L2dLFKyLofl0raMACCgbRybv6Jz2FWzokiIXN00NyqpfOIH");
 require('dotenv').config();
 
-app.use(cors());
+app.use(cors({
+    origin: [
+      "http://localhost:5173",
+      "https://life-drop-6707c.web.app",
+      "https://life-drop-6707c.firebaseapp.com",
+    ]
+  }));
 app.use(express.json());
 
 // mongo db
