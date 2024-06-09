@@ -111,6 +111,7 @@ async function run() {
     })
 
     app.get("/user", verifyToken, verifyAdmin, async(req, res) => {
+        console.log(req.query);
         const page = parseInt(req.query.page);
         const size = parseInt(req.query.size);
         const result = await userCollection.find().skip(page * size).limit(size).toArray();
@@ -432,6 +433,11 @@ async function run() {
         res.send({totalUsersCount});
     })
 
+    app.get("/totalPaymentCountForPagination", async(req, res) => {
+        const totalPaymentCountForPagination = await paymentCollection.estimatedDocumentCount();
+        res.send({totalPaymentCountForPagination});
+    })
+
     app.get("/totalDonationRequestCount", verifyToken, async(req, res) => {
         const totalDonationRequestCount = await donationRequestCollection.estimatedDocumentCount();
         res.send({totalDonationRequestCount});
@@ -470,8 +476,11 @@ async function run() {
         res.send(result);
     })
 
-    app.get("/payment", verifyToken, async(req, res) => {
-        const result = await paymentCollection.find().toArray();
+    app.get("/payment", async(req, res) => {
+        console.log(req.query)
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+        const result = await paymentCollection.find().skip(page * size).limit(size).toArray();
         res.send(result);
     })
 
