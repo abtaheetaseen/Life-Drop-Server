@@ -1,6 +1,6 @@
 1. The name of my website is LIFE-DROP
-2. GitHub Link(client-side) : https://github.com/programming-hero-web-course1/b9a12-client-side-abtaheetaseen
-3. GitHub Link(server-side) : https://github.com/programming-hero-web-course1/b9a12-server-side-abtaheetaseen
+2. GitHub Link(client-side) : https://github.com/abtaheetaseen/Life-Drop-Client
+3. GitHub Link(server-side) : https://github.com/abtaheetaseen/Life-Drop-Server
 4. Live Link(client-side) : https://life-drop-6707c.web.app/
 5. Live Link(server-side) : https://assignment-12-server-three-virid.vercel.app/
 6. Admin Email : abtahee125@gmail.com
